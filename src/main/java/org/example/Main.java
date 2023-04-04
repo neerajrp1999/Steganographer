@@ -75,7 +75,6 @@ public class Main {
                     if(option == JFileChooser.APPROVE_OPTION){
                         File file = fileChooser.getSelectedFile();
                         System.out.println("File Selected: " + file.getName());
-
                         photolabel.setIcon(new ImageIcon(resize(file,photolabel.getWidth(),photolabel.getHeight())));
 
                     }else{
