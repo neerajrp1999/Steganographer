@@ -9,7 +9,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.ByteBuffer;
-import java.util.Scanner;
 
 public class Steganographer {
 
@@ -20,13 +19,6 @@ public class Steganographer {
         if (args.length > 0) {
             if (args.length == 1) {
                 if (args[0].equals("help")) {
-                    System.out.println("");
-                    System.out.println("For encode mode provide two arguments as specified below:");
-                    System.out.println("java org.example.Steganographer1 <path_to_container_image> <path_to_message_text_file>");
-                    System.out.println("");
-                    System.out.println("For decode mode provide only one argument as specified below:");
-                    System.out.println("java org.example.Steganographer1 <path_to_image_with_hidden_message>");
-                    System.out.println("");
                     return;
                 } else {
                     decode(args[0]);
@@ -40,7 +32,7 @@ public class Steganographer {
         System.out.println("Wrong input. Pass 'help' as argument for more information.");
     }
 
-    private static void encode(String imagePath, String dataToHide) {
+    public static void encode(String imagePath, String dataToHide) {
         BufferedImage originalImage = getImageFromPath(imagePath);
         BufferedImage imageInUserSpace = getImageInUserSpace(originalImage);
 
@@ -67,7 +59,7 @@ public class Steganographer {
         saveImageToPath(imageInUserSpace, new File(finalFileName),"png");
     }
 
-    private static byte[] encodeImage(byte[] image, byte[] addition, int offset) {
+    public static byte[] encodeImage(byte[] image, byte[] addition, int offset) {
         if (addition.length + offset > image.length) {
             throw new IllegalArgumentException("Image file is not long enough to store provided text");
         }

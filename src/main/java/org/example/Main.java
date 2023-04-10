@@ -45,7 +45,10 @@ public class Main {
             }
         });
     }
+    Boolean isImageSelected_in_encoder=false;
+    String selectedImagePath_in_encoder=null;
     public void encoder(JFrame f){
+        isImageSelected_in_encoder=false;
         f.getContentPane().removeAll();
         f.repaint();
         f.setLayout(null);
@@ -61,16 +64,33 @@ public class Main {
         f.add(label);
 
         JButton selectImageFromFileSysytemButton=new JButton("Select Input Image");
-        selectImageFromFileSysytemButton.setBounds(80,200,200,50);
+        selectImageFromFileSysytemButton.setBounds(80,150,200,50);
         f.add(selectImageFromFileSysytemButton);
 
+        JLabel label1=new JLabel("Enter Data To Hide");
+        label1.setBounds(85,220,150,40);
+        f.add(label1);
+
+        JTextArea textArea=new JTextArea(100,10);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setBounds(70,250,250,100);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        f.add(scrollPane);
+
         JButton start_encode=new JButton("Start Encode");
-        start_encode.setBounds(80,300,200,50);
+        start_encode.setBounds(80,400,200,50);
         f.add(start_encode);
 
         JButton save=new JButton("Save Encoded Image");
-        save.setBounds(80,400,200,50);
+        save.setBounds(80,500,200,50);
         f.add(save);
+        save.setVisible(false);
+        save.setEnabled(false);
+
+        JButton back=new JButton("Back");
+        back.setBounds(80,600,200,50);
+        f.add(back);
 
         JLabel photolabel=new JLabel();
         photolabel.setBounds(350,150,350,240);
@@ -102,8 +122,14 @@ public class Main {
         start_encode.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //
-
+                String data=textArea.getText().toString().trim();
+                if(data.isEmpty()){
+                    JOptionPane.showMessageDialog(null, "Enter a data first ...");
+                }else if(!isImageSelected_in_encoder){
+                    JOptionPane.showMessageDialog(null, "select image first ...");
+                }else{
+                    Steganographer.encode(selectedImagePath_in_encoder,data);
+                }
             }
         });
     }
@@ -115,9 +141,10 @@ public class Main {
         int option = fileChooser.showOpenDialog(frame);
         if(option == JFileChooser.APPROVE_OPTION){
             File file = fileChooser.getSelectedFile();
+            selectedImagePath_in_encoder=file.getAbsolutePath();
             System.out.println("File Selected: " + file.getName());
             photolabel.setIcon(new ImageIcon(resize(file,photolabel.getWidth(),photolabel.getHeight())));
-
+            isImageSelected_in_encoder=true;
         }else{
             System.out.println("Open command canceled");
         }
