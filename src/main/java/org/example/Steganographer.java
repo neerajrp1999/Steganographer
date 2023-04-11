@@ -1,13 +1,12 @@
 package org.example;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.nio.ByteBuffer;
 
 public class Steganographer {
@@ -55,7 +54,7 @@ public class Steganographer {
         }
 
         String finalFileName = fileName + "_with_hidden_message.png";
-        System.out.println("Successfully encoded text in: " + finalFileName);
+        JOptionPane.showMessageDialog(null, "Successfully encoded in: " + finalFileName);
         saveImageToPath(imageInUserSpace, new File(finalFileName),"png");
     }
 
@@ -73,7 +72,7 @@ public class Steganographer {
         return image;
     }
 
-    private static String decode(String imagePath) {
+    public static String decode(String imagePath) {
         byte[] decodedHiddenText;
         try {
             BufferedImage imageFromPath = getImageFromPath(imagePath);
@@ -81,14 +80,9 @@ public class Steganographer {
             byte imageInBytes[] = getBytesFromImage(imageInUserSpace);
             decodedHiddenText = decodeImage(imageInBytes);
             String hiddenText = new String(decodedHiddenText);
-            String outputFileName = "hidden_text.txt";
-            saveTextToPath(hiddenText, new File(outputFileName));
-            //text--> hiddenText
-            System.out.println("Successfully extracted text to: " + outputFileName);
             return hiddenText;
         } catch (Exception exception) {
-            System.out.println("No hidden message. Error: " + exception);
-            return "";
+            return "No hidden message. Error: " + exception;
         }
     }
 
@@ -116,20 +110,6 @@ public class Steganographer {
             ImageIO.write(image, extension, file);
         } catch (Exception exception) {
             System.out.println("Image file could not be saved. Error: " + exception);
-        }
-    }
-
-    private static void saveTextToPath(String text, File file) {
-        try {
-            if (file.exists() == false) {
-                file.createNewFile( );
-            }
-            FileWriter fileWriter = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(text);
-            bufferedWriter.close();
-        } catch (Exception exception) {
-            System.out.println("Couldn't write text to file: " + exception);
         }
     }
 

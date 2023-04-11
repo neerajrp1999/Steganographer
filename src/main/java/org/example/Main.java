@@ -46,7 +46,9 @@ public class Main {
         });
     }
     Boolean isImageSelected_in_encoder=false;
+    Boolean isImageSelected_in_decoder=false;
     String selectedImagePath_in_encoder=null;
+    String selectedImagePath_in_decoder=null;
     public void encoder(JFrame f){
         isImageSelected_in_encoder=false;
         f.getContentPane().removeAll();
@@ -82,15 +84,16 @@ public class Main {
         start_encode.setBounds(80,400,200,50);
         f.add(start_encode);
 
-        JButton save=new JButton("Save Encoded Image");
-        save.setBounds(80,500,200,50);
-        f.add(save);
-        save.setVisible(false);
-        save.setEnabled(false);
-
         JButton back=new JButton("Back");
-        back.setBounds(80,600,200,50);
+        back.setBounds(80,500,200,50);
         f.add(back);
+
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                main(f);
+            }
+        });
 
         JLabel photolabel=new JLabel();
         photolabel.setBounds(350,150,350,240);
@@ -99,23 +102,18 @@ public class Main {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                    callFileChooser(photolabel);
+                    callFileChooser_Encoder(photolabel);
                 }
             }
         });
 
-        JLabel Encodedphotolabel=new JLabel();
-        Encodedphotolabel.setBounds(350,400,350,240);
-        f.add(Encodedphotolabel);
-
         Image dimg=getImage("src/main/java/org/example/image.png",photolabel.getWidth(),photolabel.getHeight());
         photolabel.setIcon(new ImageIcon(dimg));
-        Encodedphotolabel.setIcon(new ImageIcon(dimg));
 
         selectImageFromFileSysytemButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                    callFileChooser(photolabel);
+                callFileChooser_Encoder(photolabel);
             }
         });
 
@@ -133,7 +131,7 @@ public class Main {
             }
         });
     }
-    public void callFileChooser(JLabel photolabel){
+    public void callFileChooser_Encoder(JLabel photolabel){
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.addChoosableFileFilter(new MyFilter());
         fileChooser.setAcceptAllFileFilterUsed(false);
@@ -145,6 +143,22 @@ public class Main {
             System.out.println("File Selected: " + file.getName());
             photolabel.setIcon(new ImageIcon(resize(file,photolabel.getWidth(),photolabel.getHeight())));
             isImageSelected_in_encoder=true;
+        }else{
+            System.out.println("Open command canceled");
+        }
+    }
+    public void callFileChooser_Decoder(JLabel photolabel){
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.addChoosableFileFilter(new MyFilter());
+        fileChooser.setAcceptAllFileFilterUsed(false);
+
+        int option = fileChooser.showOpenDialog(frame);
+        if(option == JFileChooser.APPROVE_OPTION){
+            File file = fileChooser.getSelectedFile();
+            selectedImagePath_in_decoder=file.getAbsolutePath();
+            System.out.println("File Selected: " + file.getName());
+            photolabel.setIcon(new ImageIcon(resize(file,photolabel.getWidth(),photolabel.getHeight())));
+            isImageSelected_in_decoder=true;
         }else{
             System.out.println("Open command canceled");
         }
@@ -170,6 +184,7 @@ public class Main {
         return dimg;
     }
     public void decoder(JFrame f){
+        isImageSelected_in_decoder=false;
         f.getContentPane().removeAll();
         f.repaint();
         f.setLayout(null);
@@ -184,24 +199,70 @@ public class Main {
         label.setBounds(255,50,150,40);
         f.add(label);
 
-        JButton b1=new JButton("Encode");
-        b1.setBounds(275,305,100,30);
-        f.add(b1);
-        b1.addActionListener(new ActionListener() {
+        JButton selectImageFromFileSystemButton=new JButton("Select Encoded Input Image");
+        selectImageFromFileSystemButton.setBounds(80,150,200,50);
+        f.add(selectImageFromFileSystemButton);
+
+        JLabel label1=new JLabel("Decoded Message:");
+        label1.setBounds(85,220,150,40);
+        f.add(label1);
+
+        JTextArea textArea=new JTextArea(100,10);
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setBounds(70,250,250,100);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        f.add(scrollPane);
+
+        JButton start_decode=new JButton("Start Decode");
+        start_decode.setBounds(80,400,200,50);
+        f.add(start_decode);
+
+        JButton back=new JButton("Back");
+        back.setBounds(80,500,200,50);
+        f.add(back);
+
+        back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                encoder(f);
+                main(f);
             }
         });
-        JButton b2=new JButton("Decode");
-        b2.setBounds(275,345,100,30);
-        f.add(b2);
-        b2.addActionListener(new ActionListener() {
+
+        JLabel photolabel=new JLabel();
+        photolabel.setBounds(350,150,350,240);
+        f.add(photolabel);
+        photolabel.addMouseListener(new MouseAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                decoder(f);
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                    callFileChooser_Decoder(photolabel);
+                }
             }
         });
+
+        Image dimg=getImage("src/main/java/org/example/image.png",photolabel.getWidth(),photolabel.getHeight());
+        photolabel.setIcon(new ImageIcon(dimg));
+
+        selectImageFromFileSystemButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                callFileChooser_Decoder(photolabel);
+            }
+        });
+
+        start_decode.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(!isImageSelected_in_decoder){
+                    JOptionPane.showMessageDialog(null, "select image first ...");
+                }else{
+                    textArea.setText(Steganographer.decode(selectedImagePath_in_decoder));
+                }
+            }
+        });
+
     }
 
     public static void main(String[] args) {
@@ -211,6 +272,7 @@ public class Main {
 class MyFilter extends FileFilter {
     final static String jpg = "jpg";
     final static String gif = "gif";
+    final static String png = "png";
     final static String tiff = "tiff";
 
     // Accept all directories and (gif ||
@@ -226,6 +288,7 @@ class MyFilter extends FileFilter {
                     s.substring(i+1).toLowerCase();
             if (tiff.equals(extension)
                     || gif.equals(extension)
+                    || png.equals(extension)
                     || jpg.equals(extension)) {
                 return true;
             } else {
